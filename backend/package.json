@@ -1,0 +1,27 @@
+{
+  "name": "filexlr-backend",
+  "version": "1.0.0",
+  "description": "fileXlr - File Metadata Analyzer Backend (ExifTool inspired)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "exifreader": "^4.26.0",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mime-types": "^2.1.35",
+    "mongoose": "^8.9.3",
+    "multer": "^1.4.5-lts.1",
+    "music-metadata": "^7.14.0",
+    "pdf-parse": "^1.1.1",
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
