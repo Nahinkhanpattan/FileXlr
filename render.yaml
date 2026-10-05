@@ -1,0 +1,36 @@
+services:
+  # Backend Web Service
+  - type: web
+    name: filexlr-backend
+    env: node
+    region: singapore
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: MONGO_URI
+        value: mongodb+srv://nahinkhanpattan:098765454@predpostai.pylpq7e.mongodb.net/filexlr?retryWrites=true&w=majority
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: filexlr-frontend
+          property: url
+
+  # Frontend Static Site
+  - type: web
+    name: filexlr-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: filexlr-backend
+          property: url
+          path: /api

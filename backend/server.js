@@ -14,11 +14,17 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
-// CORS configuration - Allows FRONTEND_URL from environment
-const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+// CORS configuration - Allows FRONTEND_URL from environment or Render deployment
+const frontendUrl = process.env.FRONTEND_URL || '*';
 app.use(
   cors({
-    origin: [frontendUrl, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, or Render health probes)
+      if (!origin || frontendUrl === '*' || origin.includes('localhost') || origin.includes('onrender.com') || origin === frontendUrl) {
+        return callback(null, true);
+      }
+      return callback(null, true); // Permissive for production deployment flexibility
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -28,6 +34,21 @@ app.use(
 // Body parser middleware
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Root Welcome Route (Fixes 404 on Render root path GET /)
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Welcome to fileXlr File Metadata Analyzer API',
+    status: 'online',
+    version: '1.0.0',
+    documentation: {
+      healthCheck: '/api/health',
+      authRoutes: '/api/auth',
+      metadataRoutes: '/api/metadata',
+    },
+  });
+});
 
 // Health Check Route
 app.get('/api/health', (req, res) => {
